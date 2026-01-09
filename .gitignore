@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files (contain secrets)
+.env
+*.env.local
+
+# Build outputs
+dist/
+build/
+tmp/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Frontend
+.nuxt/
+.output/
+
+# Gemini artifacts (local only)
+.gemini/

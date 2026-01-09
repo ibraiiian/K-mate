@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # 1. DATABASE SERVICE (MySQL 8.0)
+  db:
+    image: mysql:8.0
+    container_name: kmate_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # Password user 'root'
+      MYSQL_DATABASE: k_mate_db          # Nama DB otomatis dibuat
+      MYSQL_USER: admin                  # User aplikasi (opsional)
+      MYSQL_PASSWORD: password123        # Password aplikasi
+    ports:
+      - "3306:3306"
+    volumes:
+      # Volume 1: Agar data tidak hilang saat docker dimatikan
+      - mysql_data:/var/lib/mysql
+      
+      # Volume 2: MAGIC STEP! 
+      # Ini akan otomatis menjalankan file schema.sql kamu saat database pertama kali dibuat.
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    networks:
+      - kmate_network
+
+  # 2. DATABASE GUI (phpMyAdmin)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: kmate_pma
+    restart: always
+    ports:
+      - "8081:80"  # Akses lewat browser: http://localhost:8081
+    environment:
+      PMA_HOST: db          # Connect ke service 'db' di atas
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      - db
+    networks:
+      - kmate_network
+
+# Definisi Volume & Network
+volumes:
+  mysql_data:
+
+networks:
+  kmate_network:
+    driver: bridge
