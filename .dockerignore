@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Go
+backend/.env
+backend/bin/
+backend/tmp/
+*.exe
+
+# Node/Vue
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.*
+*.log
+
+# Docker
+docker-compose.yml
+database/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

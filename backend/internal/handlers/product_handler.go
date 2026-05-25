@@ -53,25 +53,37 @@ func (h *ProductHandler) CreateProduct(c *fiber.Ctx) error {
 	if err == nil && file != nil {
 		fmt.Println("Image received:", file.Filename, "Size:", file.Size)
 
-		// Ensure directory exists
-		uploadDir := "./uploads/products"
-		if err := os.MkdirAll(uploadDir, 0755); err != nil {
-			return utils.InternalErrorResponse(c, "Gagal membuat folder upload")
+		if os.Getenv("GCS_BUCKET_NAME") != "" {
+			// Save to Google Cloud Storage
+			url, err := utils.UploadToGCS(file)
+			if err != nil {
+				fmt.Println("Error upload to GCS:", err)
+				return utils.InternalErrorResponse(c, "Gagal upload gambar ke Cloud Storage")
+			}
+			imagePath = url
+			fmt.Println("Image uploaded to GCS:", imagePath)
+		} else {
+			// Fallback: Save to Local Storage
+			// Ensure directory exists
+			uploadDir := "./uploads/products"
+			if err := os.MkdirAll(uploadDir, 0755); err != nil {
+				return utils.InternalErrorResponse(c, "Gagal membuat folder upload")
+			}
+
+			// Generate unique filename
+			ext := filepath.Ext(file.Filename)
+			filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+			savePath := filepath.Join(uploadDir, filename)
+
+			// Save file
+			if err := c.SaveFile(file, savePath); err != nil {
+				return utils.InternalErrorResponse(c, "Gagal menyimpan gambar lokal")
+			}
+
+			// Set database path (relative URL)
+			imagePath = fmt.Sprintf("/uploads/products/%s", filename)
+			fmt.Println("Image saved locally to:", imagePath)
 		}
-
-		// Generate unique filename
-		ext := filepath.Ext(file.Filename)
-		filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-		savePath := filepath.Join(uploadDir, filename)
-
-		// Save file
-		if err := c.SaveFile(file, savePath); err != nil {
-			return utils.InternalErrorResponse(c, "Gagal menyimpan gambar")
-		}
-
-		// Set database path (relative URL)
-		imagePath = fmt.Sprintf("/uploads/products/%s", filename)
-		fmt.Println("Image saved to:", imagePath)
 	}
 
 	// 2. Parse Data JSON
@@ -206,25 +218,37 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		if err == nil && file != nil {
 			fmt.Println("Update - Image received:", file.Filename, "Size:", file.Size)
 
-			// Ensure directory exists
-			uploadDir := "./uploads/products"
-			if err := os.MkdirAll(uploadDir, 0755); err != nil {
-				return utils.InternalErrorResponse(c, "Gagal membuat folder upload")
+			if os.Getenv("GCS_BUCKET_NAME") != "" {
+				// Save to Google Cloud Storage
+				url, err := utils.UploadToGCS(file)
+				if err != nil {
+					fmt.Println("Error upload to GCS:", err)
+					return utils.InternalErrorResponse(c, "Gagal upload gambar ke Cloud Storage")
+				}
+				req.ImagePath = url
+				fmt.Println("Update - Image uploaded to GCS:", req.ImagePath)
+			} else {
+				// Fallback: Save to Local Storage
+				// Ensure directory exists
+				uploadDir := "./uploads/products"
+				if err := os.MkdirAll(uploadDir, 0755); err != nil {
+					return utils.InternalErrorResponse(c, "Gagal membuat folder upload")
+				}
+
+				// Generate unique filename
+				ext := filepath.Ext(file.Filename)
+				filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
+				savePath := filepath.Join(uploadDir, filename)
+
+				// Save file
+				if err := c.SaveFile(file, savePath); err != nil {
+					return utils.InternalErrorResponse(c, "Gagal menyimpan gambar lokal")
+				}
+
+				// Set database path
+				req.ImagePath = fmt.Sprintf("/uploads/products/%s", filename)
+				fmt.Println("Update - Image saved locally to:", req.ImagePath)
 			}
-
-			// Generate unique filename
-			ext := filepath.Ext(file.Filename)
-			filename := fmt.Sprintf("%d%s", time.Now().UnixNano(), ext)
-			savePath := filepath.Join(uploadDir, filename)
-
-			// Save file
-			if err := c.SaveFile(file, savePath); err != nil {
-				return utils.InternalErrorResponse(c, "Gagal menyimpan gambar")
-			}
-
-			// Set database path
-			req.ImagePath = fmt.Sprintf("/uploads/products/%s", filename)
-			fmt.Println("Update - Image saved to:", req.ImagePath)
 		}
 
 		// 2. Parse JSON data from "data" field

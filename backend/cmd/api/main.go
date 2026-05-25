@@ -54,13 +54,13 @@ func main() {
 	app.Static("/uploads", "./uploads")
 
 	// 8. Serve Vue Frontend (Production Build)
-	// Serve built Vue files from ../frontend/dist
-	app.Static("/", "../frontend/dist")
+	// Serve built Vue files from ./dist
+	app.Static("/", "./dist")
 
 	// 9. SPA Fallback - semua route non-API/non-uploads serve index.html
 	// Agar Vue Router (history mode) berfungsi di production
 	app.Get("/*", func(c *fiber.Ctx) error {
-		return c.SendFile("../frontend/dist/index.html")
+		return c.SendFile("./dist/index.html")
 	})
 
 	// 10. Start Server
