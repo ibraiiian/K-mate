@@ -42,8 +42,14 @@ func main() {
 
 	// 5. Middleware
 	app.Use(logger.New()) // Log setiap request ke terminal
+
+	// Setup CORS dari Environment Variable
+	allowedOrigins := os.Getenv("ALLOWED_ORIGINS")
+	if allowedOrigins == "" {
+		allowedOrigins = "http://localhost:5173,http://localhost:3000" // fallback
+	}
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://localhost:5173", // URL Frontend Vue (Vite)
+		AllowOrigins: allowedOrigins,
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
 	}))
 

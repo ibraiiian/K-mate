@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"time"
+
 	"k-mate-backend/internal/handlers"
 	"k-mate-backend/internal/middleware"
 	"k-mate-backend/internal/repository"
@@ -8,6 +10,7 @@ import (
 	"k-mate-backend/pkg/utils"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 )
 
 // SetupRoutes configures all API routes
@@ -61,8 +64,21 @@ func SetupRoutes(app *fiber.App) {
 	// ==================== PUBLIC ROUTES ====================
 	// Auth Routes - No JWT Required
 	auth := api.Group("/auth")
+
+	// Rate Limiter untuk mencegah brute-force login
+	loginLimiter := limiter.New(limiter.Config{
+		Max:        5,               // Maksimal 5 request
+		Expiration: 1 * time.Minute, // Per 1 menit
+		KeyGenerator: func(c *fiber.Ctx) string {
+			return c.IP() // Berdasarkan IP Address
+		},
+		LimitReached: func(c *fiber.Ctx) error {
+			return utils.ErrorResponse(c, fiber.StatusTooManyRequests, "Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit.")
+		},
+	})
+
 	auth.Post("/register", authHandler.Register)
-	auth.Post("/login", authHandler.Login)
+	auth.Post("/login", loginLimiter, authHandler.Login)
 
 	// ==================== PROTECTED ROUTES ====================
 	// All routes below require valid JWT token
