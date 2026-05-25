@@ -1,7 +1,9 @@
 import axios from 'axios'
 
-// Base URL - sesuaikan dengan port backend
-const API_BASE_URL = 'http://localhost:3000/api/v1'
+// Base URL - relative path agar bisa berjalan di satu port
+// Dev: Vite proxy forward /api → localhost:3000
+// Prod: Go serve Vue dist + API di port yang sama
+const API_BASE_URL = '/api/v1'
 
 // Create axios instance
 const api = axios.create({

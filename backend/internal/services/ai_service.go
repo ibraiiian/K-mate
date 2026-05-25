@@ -36,6 +36,7 @@ func NewAIService(productRepo *repository.ProductRepository, reportRepo *reposit
 // Groq API types (OpenAI-compatible)
 type ChatMessage struct {
 	Role       string     `json:"role"`
+	
 	Content    string     `json:"content,omitempty"`
 	ToolCalls  []ToolCall `json:"tool_calls,omitempty"`
 	ToolCallID string     `json:"tool_call_id,omitempty"`

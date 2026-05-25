@@ -53,16 +53,17 @@ func main() {
 	// 7. Static File Serving (Uploads)
 	app.Static("/uploads", "./uploads")
 
-	// 8. Health Check Route
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{
-			"status":  "success",
-			"message": "K-Mate Backend is Running 🚀",
-			"db":      "Connected to MySQL",
-		})
+	// 8. Serve Vue Frontend (Production Build)
+	// Serve built Vue files from ../frontend/dist
+	app.Static("/", "../frontend/dist")
+
+	// 9. SPA Fallback - semua route non-API/non-uploads serve index.html
+	// Agar Vue Router (history mode) berfungsi di production
+	app.Get("/*", func(c *fiber.Ctx) error {
+		return c.SendFile("../frontend/dist/index.html")
 	})
 
-	// 7. Start Server
+	// 10. Start Server
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
