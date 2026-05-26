@@ -24,7 +24,7 @@
         <div class="h-16 w-16 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
            <img 
             v-if="product?.image_path" 
-            :src="getImageUrl(product.image_path)" 
+            :src="`http://localhost:3000${product.image_path}`" 
             class="h-full w-full object-cover"
             alt="Product"
             @error="$event.target.src = '/placeholder.png'" 
@@ -68,7 +68,6 @@
 <script setup>
 import { computed } from 'vue'
 import { X, Package, AlertTriangle } from 'lucide-vue-next'
-import { getImageUrl } from '@/utils/imageUrl'
 
 const props = defineProps({
   show: Boolean,

@@ -69,7 +69,7 @@
                     <div class="h-10 w-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
                       <img 
                         v-if="product.image_path" 
-                        :src="getImageUrl(product.image_path)" 
+                        :src="`http://localhost:3000${product.image_path}`" 
                         class="h-full w-full object-cover"
                         alt="Product Image"
                         @error="$event.target.src = '/placeholder.png'" 
@@ -158,7 +158,6 @@ import { ref, onMounted } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import ProductFormModal from '@/components/inventory/ProductFormModal.vue'
 import { useProductStore } from '@/stores/productStore'
-import { getImageUrl } from '@/utils/imageUrl'
 import BaseButton from '@/components/common/BaseButton.vue'
 import BaseInput from '@/components/common/BaseInput.vue'
 import { 
