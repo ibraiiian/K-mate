@@ -18,7 +18,8 @@ func ConnectDB() {
 	// 1. Ambil DSN dari .env
 	dsn := os.Getenv("DB_DSN")
 	if dsn == "" {
-		log.Fatal("Error: DB_DSN tidak ditemukan di .env")
+		log.Println("⚠️ PERINGATAN: DB_DSN kosong! Mengabaikan koneksi database agar server tetap bisa menyala. Harap set DB_DSN di Cloud Run Dashboard.")
+		return
 	}
 
 	// 2. Config Log Mode (Info query SQL terlihat jika development)

@@ -252,11 +252,19 @@ func (h *ProductHandler) UpdateProduct(c *fiber.Ctx) error {
 		}
 
 		// 2. Parse JSON data from "data" field
+		// Simpan imagePath yang baru di-upload sebelum parsing JSON
+		uploadedImagePath := req.ImagePath
+
 		dataStr := c.FormValue("data")
 		if dataStr != "" {
 			if err := json.Unmarshal([]byte(dataStr), &req); err != nil {
 				return utils.BadRequestResponse(c, "Format data JSON tidak valid")
 			}
+		}
+
+		// Kembalikan imagePath dari upload (jangan sampai tertimpa oleh JSON)
+		if uploadedImagePath != "" {
+			req.ImagePath = uploadedImagePath
 		}
 	} else {
 		// Handle regular JSON body

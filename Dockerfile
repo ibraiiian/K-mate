@@ -7,7 +7,7 @@ COPY frontend/ ./
 RUN npm run build
 
 # Stage 2: Build Backend Go
-FROM golang:1.22-alpine AS backend-builder
+FROM golang:1.25-alpine AS backend-builder
 WORKDIR /app/backend
 # Tambahkan env agar compile menjadi single binary tanpa cgo dependency
 ENV CGO_ENABLED=0
