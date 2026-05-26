@@ -98,6 +98,7 @@
 <script setup>
 import { ref, reactive, watch, computed } from 'vue'
 import { Image } from 'lucide-vue-next'
+import { getImageUrl } from '@/utils/imageUrl'
 
 const props = defineProps({
   isOpen: Boolean,
@@ -157,7 +158,7 @@ watch(() => props.product, (newProduct) => {
         
         // Prefill image
         if (newProduct.image_path) {
-            imagePreview.value = `http://localhost:3000${newProduct.image_path}`
+            imagePreview.value = getImageUrl(newProduct.image_path)
         } else {
             imagePreview.value = null
         }
