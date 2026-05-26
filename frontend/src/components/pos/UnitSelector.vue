@@ -24,7 +24,7 @@
         <div class="h-16 w-16 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
            <img 
             v-if="product?.image_path" 
-            :src="`http://localhost:3000${product.image_path}`" 
+            :src="product.image_path.startsWith('http') ? product.image_path : `http://localhost:3000${product.image_path}`" 
             class="h-full w-full object-cover"
             alt="Product"
             @error="$event.target.src = '/placeholder.png'" 

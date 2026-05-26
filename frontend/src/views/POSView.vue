@@ -58,7 +58,7 @@
                         <div class="aspect-square bg-slate-100 rounded-md overflow-hidden relative border border-slate-100">
                              <img 
                                 v-if="product.image_path" 
-                                :src="`http://localhost:3000${product.image_path}`" 
+                                :src="product.image_path.startsWith('http') ? product.image_path : `http://localhost:3000${product.image_path}`" 
                                 class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition duration-500"
                                 @error="$event.target.src = '/placeholder.png'" 
                              >

@@ -157,7 +157,7 @@ watch(() => props.product, (newProduct) => {
         
         // Prefill image
         if (newProduct.image_path) {
-            imagePreview.value = `http://localhost:3000${newProduct.image_path}`
+            imagePreview.value = newProduct.image_path.startsWith('http') ? newProduct.image_path : `http://localhost:3000${newProduct.image_path}`
         } else {
             imagePreview.value = null
         }
